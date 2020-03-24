@@ -7,6 +7,38 @@ namespace Gradebook.Tests
 {
     public class TypeTests
     {
+        public delegate string WriteLogDelegate(string logMessage);
+
+        int count = 0;
+
+        [Fact]
+        public void WriteLogDelegateCanPointoToMethod()
+        {
+            //O metodo que ira ser chamado deve ter o tipo de parametro e retorno igual declarado no delegate
+            WriteLogDelegate log = ReturnMessage; //Passando uma função criada
+            log += ReturnMessage;
+            log += IncrementCount;
+
+            Assert.Equal(0, count);
+            //log = (string a) => { return a; }; //Arrow Fuction
+            var result = log("Teste");
+            Console.WriteLine(result);
+            
+            Assert.Equal(3 , count);
+        }
+
+        string IncrementCount(string message)
+        {
+            ++this.count;
+            return message.ToLower();
+        }
+
+        string ReturnMessage(string message)
+        {
+            ++this.count;
+            return message;
+        }
+
         [Fact]
         public void ValieTypeAlsoPassByValue()
         {
@@ -73,9 +105,10 @@ namespace Gradebook.Tests
         public void StringsBahaveLikeValueType()
         {
             String name = "Fabricio";
-            name = MakeUpperCase(name);
+            var upper = MakeUpperCase(name);
 
-            Assert.Equal("FABRICIO", name);
+            Assert.Equal("FABRICIO", upper);
+            Assert.Equal("Fabricio", name);
         }
 
         private string MakeUpperCase(string parameter)
